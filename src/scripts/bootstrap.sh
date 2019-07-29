@@ -12,6 +12,6 @@ pkg remove -a -y
 # Install portmaster
 pkg install portmaster -y
 
-
+portmaster -f
 
 

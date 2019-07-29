@@ -6,5 +6,5 @@ rm -rf .terraform/ plan *.tfstate*
 
 terraform init
 
-terraform plan -out "plan"
+terraform plan --var-file=fanix.tfvars -out "plan"
 terraform apply "plan"
