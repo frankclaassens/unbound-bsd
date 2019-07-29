@@ -1,0 +1,15 @@
+# Install common packages on all FreeBSD server such as
+# bash, vnstat, htop and more
+- hosts: all
+  tasks:
+      - name: Update PortSnap
+        shell: /usr/sbin/portsnap fetch && /usr/sbin/portsnap extract && /usr/sbin/portsnap fetch update
+      
+      - name: Update PortSnap
+        shell: pkg remove -a -y
+
+      - name: Update PortSnap
+
+      - name: Install required packages
+        pkgng:
+            name: jq

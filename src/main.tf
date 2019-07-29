@@ -1,22 +1,10 @@
-provider "vultr" { api_key = "" }
-
-resource "vultr_instance" "unbound" {
-  name              = "unbound"
-  region_id         = "${data.vultr_region.silicon_valley.id}"
-  plan_id           = "${data.vultr_plan.starter.id}"
-  os_id             = "${data.vultr_os.container_bsd.id}"
-  ssh_key_ids       = ["${data.vultr_ssh_key.root.id}"]
-  hostname          = "unbound"
-  tag               = "container-bsd"
-  firewall_group_id = "${vultr_firewall_group.example.id}"
+provider "vultr" { 
+  api_key = "${var.vultr_api_key}" 
 }
 
-resource "vultr_startup_script" "bootstrap_script" {
-  name       = "bootstrap.sh"
-  content    = "${file("${path.module}/scripts/bootstrap.sh")}"
-  type       = "boot"
-}
-
+###############################################################################################
+# DATA
+###############################################################################################
 data "vultr_region" "silicon_valley" {
   filter {
     name   = "name"
@@ -34,38 +22,90 @@ data "vultr_os" "container_bsd" {
 data "vultr_plan" "starter" {
   filter {
     name   = "price_per_month"
-    values = ["5.00"]
+    values = ["20.00"]
   }
 
   filter {
     name   = "ram"
-    values = ["1024"]
+    values = ["4096"]
   }
 }
 
-data "vultr_ssh_key" "root" {
-  filter {
-    name   = "name"
-    values = ["root"]
-  }
+# data "vultr_ssh_key" "root" {
+#   filter {
+#     name   = "name"
+#     values = ["root"]
+#   }
+# }
+###############################################################################################
+# RESOURCES
+###############################################################################################
+# resource "vultr_startup_script" "bootstrap" {
+#   name       = "bootstrap"
+#   content    = "${file("${path.module}/scripts/bootstrap.sh")}"
+#   type       = "boot"
+# }
+
+resource "vultr_ssh_key" "unbound" {
+  name       = "unbound-server"
+  public_key = "${file("${var.ssh_public_key}")}"
 }
 
-resource "vultr_firewall_group" "example" {
-  description = "example group"
+resource "vultr_firewall_group" "unbound" {
+  description = "unbound server firewall group"
 }
 
 resource "vultr_firewall_rule" "rule1" {
-  firewall_group_id = "${vultr_firewall_group.example.id}"
-  cidr_block        = "0.0.0.0/0"
+  firewall_group_id = "${vultr_firewall_group.unbound.id}"
+  cidr_block        = "0.0.0.0/0" 
   protocol          = "tcp"
   from_port         = 22
   to_port           = 22
 }
+###############################################################################################
+# INSTANCES
+###############################################################################################
+resource "vultr_instance" "unbound" {
+  name              = "unbound"
+  region_id         = "${data.vultr_region.silicon_valley.id}"
+  plan_id           = "${data.vultr_plan.starter.id}"
+  os_id             = "${data.vultr_os.container_bsd.id}"
+  ssh_key_ids       = ["${vultr_ssh_key.unbound.id}"]
+  firewall_group_id = "${vultr_firewall_group.unbound.id}"
+  # startup_script_id = "${vultr_startup_script.bootstrap.id}"
 
-resource "vultr_firewall_rule" "rule2" {
-  firewall_group_id = "${vultr_firewall_group.example.id}"
-  cidr_block        = "0.0.0.0/0"
-  protocol          = "tcp"
-  from_port         = 19844
-  to_port           = 19844
+  hostname          = "unbound"
+  tag               = "unbound"
+
+connection {
+    type = "ssh"
+    host = "${vultr_instance.unbound.ipv4_address}"
+    user = "root"
+    private_key = "${file("${var.ssh_key_private}")}"
+    agent = "false"
+  }
+
+provisioner "remote-exec" {
+    inline = ["echo hallo world > /root/hello"]
+}
+
+provisioner "local-exec" {
+    command = "sleep 5; ANSIBLE_HOST_KEY_CHECKING=False TF_STATE=terraform.tfstate ansible-playbook --verbose -u root --private-key ${var.ssh_key_private} -i '${vultr_instance.unbound.ipv4_address},' playbooks/configure-server.yml playbooks/install-packages.yml"
+}
+
+  # provisioner "file" {
+  #   source      = "${file("${path.module}/configs/etc/make.conf")}"
+  #   destination = "/root/make.conf"
+  # }
+}
+###############################################################################################
+# OUTPUT
+###############################################################################################
+// Output all of the virtual machine's IPv4 addresses to STDOUT when the infrastructure is ready.
+output ip_addresses {
+  value = "${list(vultr_instance.unbound.ipv4_address)}"
+}
+
+output root_password {
+  value = "${list(vultr_instance.unbound.default_password)}"
 }

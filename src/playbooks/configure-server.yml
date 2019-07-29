@@ -1,0 +1,26 @@
+- hosts: all
+  become: true
+  
+  tasks:
+      - name: Add the user 'dragon' with a tcsh shell, appending the group 'admins' and 'developers' to the user's groups
+        user:
+          name: dragon
+          shell: /bin/tcsh
+          groups: wheel,operator
+          append: yes
+          expires: -1
+
+      - name: Create a 2048-bit SSH key for user dragon in ~dragon/.ssh/id_rsa
+        user:
+          name: dragon
+          generate_ssh_key: yes
+          ssh_key_bits: 2048
+          ssh_key_file: .ssh/id_rsa
+
+      - name: Cope make.conf
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/make.conf
+          dest: /etc/make.conf
+          owner: root
+          group: wheel
+          mode: '0644'

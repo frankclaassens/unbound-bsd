@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#terraform destroy -force
+
 rm -rf .terraform/ plan *.tfstate*
 
 terraform init
