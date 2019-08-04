@@ -17,10 +17,87 @@
           ssh_key_bits: 2048
           ssh_key_file: .ssh/id_rsa
 
-      - name: Cope make.conf
+      - name: Copy make.conf
         copy:
           src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/make.conf
           dest: /etc/make.conf
           owner: root
           group: wheel
           mode: '0644'
+
+      - name: Copy bootstrap.sh
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/scripts/bootstrap.sh
+          dest: /tmp/bootstrap.sh
+          owner: root
+          group: wheel
+          mode: '0700'
+
+      - name: Copy bootstrap-quick.sh
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/scripts/bootstrap-quick.sh
+          dest: /tmp/bootstrap-quick.sh
+          owner: root
+          group: wheel
+          mode: '0700'
+
+      - name: Copy configure-zsh.sh
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/scripts/configure-zsh.sh
+          dest: /tmp/configure-zsh.sh
+          owner: root
+          group: wheel
+          mode: '0700'
+######################################   
+# USER PROFILES
+######################################    
+      - name: (root) Copy .profile
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.profile
+          dest: /root/.profile
+          owner: root
+          group: wheel
+          mode: '0640'     
+ 
+      - name: (root) Copy .cshrc
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.cshrc
+          dest: /root/.cshrc
+          owner: root
+          group: wheel
+          mode: '0640'  
+
+      - name: (root) .zshrc
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.zshrc
+          dest: /root/.zshrc
+          owner: root
+          group: wheel
+          mode: '0640'
+
+      - name: (dragon) Copy .profile
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.profile
+          dest: /home/dragon/.profile
+          owner: dragon
+          group: dragon
+          mode: '0640'     
+ 
+      - name: (dragon) Copy .cshrc
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.cshrc
+          dest: /home/dragon/.cshrc
+          owner: dragon
+          group: dragon
+          mode: '0640'  
+
+      - name: (dragon) .zshrc
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.zshrc
+          dest: /home/dragon/.zshrc
+          owner: dragon
+          group: dragon
+          mode: '0640'              
+
+      # - name: Execute bootstrap.sh
+      #   shell: /root/bootstrap.sh >> /root/bootstrap.log

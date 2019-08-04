@@ -3,3 +3,4 @@ plan
 terraform.tfstate
 terraform.tfstate.backup
 lock.json
+.terraform.tfstate.lock.info
