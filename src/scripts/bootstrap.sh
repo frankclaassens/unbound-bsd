@@ -1,7 +1,10 @@
 #!/bin/sh
 
-PATH="~/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+PATH="~/bin:/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin"
 export PATH
+
+rm /root/.profile
+rm /root/.login
 
 # Set local time
 cp /usr/share/zoneinfo/Europe/London /etc/localtime
@@ -17,88 +20,62 @@ pkg update
 pkg remove -a --force -y
 
 # Reinstall pkgng
-cd /usr/ports/ports-mgmt/dialog4ports
-make -DBATCH install clean
-
-# Install libressl
-cd /usr/ports/security/libressl
-make -DBATCH install clean
+make -DBATCH -C /usr/ports/ports-mgmt/pkg install clean
+make -DBATCH -C /usr/ports/ports-mgmt/dialog4ports install clean
 
 # Install portmaster
-cd /usr/ports/ports-mgmt/portmaster
-make -DBATCH install clean
+make -DBATCH -C /usr/ports/ports-mgmt/portmaster install clean
 
 # Rebuild all ports
 portmaster --clean-distfiles -y
-env BATCH=yes; portmaster -G --no-confirm -afy
+env BATCH=yes; portmaster -G --no-confirm -a -f -D -y
+
+# Install libressl
+env BATCH=yes; portmaster -G --no-confirm -y security/libressl
 
 echo "PLEASE REBOOT TO REFRESH LIBRESSL"
 exit 0
 
-# Install portupgrade
-cd /usr/ports/ports-mgmt/portupgrade
-make -DBATCH install clean
-
 ##############################################################
 # GNU TOOLING
 ##############################################################
-#env BATCH=yes; portmaster -G --no-confirm -y base/binutils devel/autoconf devel/automake devel/gmake devel/gdb devel/libtool lang/gcc9
-
-env BATCH=yes; portmaster -G --no-confirm -y base/binutils
-env BATCH=yes; portmaster -G --no-confirm -y devel/autoconf
-env BATCH=yes; portmaster -G --no-confirm -y devel/automake
-env BATCH=yes; portmaster -G --no-confirm -y devel/gmake
-env BATCH=yes; portmaster -G --no-confirm -y devel/gdb
-env BATCH=yes; portmaster -G --no-confirm -y devel/libtool
+#or env BATCH=yes; portmaster -G --no-confirm -y devel/amd64-binutils
+env BATCH=yes; portmaster -G --no-confirm -y devel/gmake devel/autoconf devel/automake devel/binutils devel/libtool
 env BATCH=yes; portmaster -G --no-confirm -y lang/gcc9
-
-# portinstall --batch --yes base/binutils
-# portinstall --batch --yes devel/autoconf devel/automake devel/gmake devel/gdb devel/libtool lang/gcc9
-# portinstall --batch --yes devel/automake
-# portinstall --batch --yes devel/gmake
-# portinstall --batch --yes devel/gdb
-# portinstall --batch --yes devel/libtool
-# portinstall --batch --yes lang/gcc9
-
-# cd /usr/ports/base/binutils
-# make -DBATCH install clean
-
-# cd /usr/ports/devel/gmake
-# make -DBATCH install clean
-
-# cd /usr/ports/devel/autoconf
-# make -DBATCH install clean
-
-# cd /usr/ports/devel/automake
-# make -DBATCH install clean
-
-# cd /usr/ports/devel/gdb
-# make -DBATCH install clean
-
-# cd /usr/ports/devel/libtool
-# make -DBATCH install clean
-
-# cd /usr/ports/lang/gcc9
-# make -DBATCH install clean
 
 export CC="gcc9"
 export CXX="g++9"
 export CPP="gcc9 -E"
 
-echo 'export CC="gcc9"' | tee -a /root/.profile
-echo 'export CXX="g++9"' | tee -a /root/.profile
-echo 'export CPP="gcc9 -E"' | tee -a /root/.profile
+echo 'export CC="gcc9"' | tee -a /root/.cshrc
+echo 'export CXX="g++9"' | tee -a /root/.cshrc
+echo 'export CPP="gcc9 -E"' | tee -a /root/.cshrc
+
+echo 'export CC="gcc9"' | tee -a /home/dragon/.cshrc
+echo 'export CXX="g++9"' | tee -a /home/dragon/.cshrc
+echo 'export CPP="gcc9 -E"' | tee -a /home/dragon/.cshrc
 
 ##############################################################
 
-env BATCH=yes; portmaster -G --no-confirm -y ftp/curl shells/zsh devel/git
-#portinstall --batch --yes ftp/curl
-#portinstall --batch --yes shells/zsh
-#portinstall --batch --yes devel/git
+# Install OPEN_NTPD
+env BATCH=yes; portmaster -G --no-confirm -y net/openntpd
+echo 'ntpd_enable="NO"' | tee -a /etc/rc.conf
+echo 'openntpd_enable="YES"' | tee -a /etc/rc.conf
+echo 'openntpd_flags="-s"' | tee -a /etc/rc.conf
+service openntpd onestart
+###### END ######
 
-# clean ports working directories, no longer referenced distfiles, outdated package file
-portmaster --clean-distfiles -y
-#portsclean -Di
+# Install OPENSSH-PORTABLE
+env BATCH=yes; portmaster -G --no-confirm -y security/openssh-portable
+echo 'sshd_enable="NO"' | tee -a /etc/rc.conf
+echo 'openssh_enable="YES"' | tee -a /etc/rc.conf
+service openntpd onestart
+###### END ######
+
+##############################################################
+# Configure oh-my-zsh
+##############################################################
+env BATCH=yes; portmaster -G --no-confirm -y ftp/curl shells/zsh devel/git
 
 # Configure oh-my-zsh => root
 chsh -s /usr/local/bin/zsh root

@@ -25,6 +25,67 @@
           group: wheel
           mode: '0644'
 
+      - name: Copy pf.conf
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/pf.conf
+          dest: /etc/pf.conf
+          owner: root
+          group: wheel
+          mode: '0644'
+          
+      - name: Copy portmaster.rc
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/portmaster.rc
+          dest: /usr/local/etc/portmaster.rc
+          owner: root
+          group: wheel
+          mode: '0644'     
+          
+      - name: Copy sysctl.conf
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/sysctl.conf
+          dest: /etc/sysctl.conf
+          owner: root
+          group: wheel
+          mode: '0644'
+             
+      ######################################   
+      # ETC Shell Configs
+      ######################################  
+      - name: Copy /etc/profile
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/profile
+          dest: /etc/profile
+          owner: root
+          group: wheel
+          mode: '0644'      
+
+      - name: Copy /etc/zprofile
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/zprofile
+          dest: /etc/zprofile
+          owner: root
+          group: wheel
+          mode: '0644'
+
+      - name: Copy /etc/zshenv
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/zshenv
+          dest: /etc/zshenv
+          owner: root
+          group: wheel
+          mode: '0644'
+
+      - name: Copy /etc/csh.cshrc
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/csh.cshrc
+          dest: /etc/csh.cshrc
+          owner: root
+          group: wheel
+          mode: '0644'
+      ######################################
+      #     Bootstraping scripts
+      ######################################
       - name: Copy bootstrap.sh
         copy:
           src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/scripts/bootstrap.sh
@@ -40,28 +101,12 @@
           owner: root
           group: wheel
           mode: '0700'
-
-      - name: Copy configure-zsh.sh
-        copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/scripts/configure-zsh.sh
-          dest: /tmp/configure-zsh.sh
-          owner: root
-          group: wheel
-          mode: '0700'
-######################################   
-# USER PROFILES
-######################################    
-      - name: (root) Copy .profile
-        copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.profile
-          dest: /root/.profile
-          owner: root
-          group: wheel
-          mode: '0640'     
- 
+      ######################################   
+      # USER PROFILES
+      ######################################
       - name: (root) Copy .cshrc
         copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.cshrc
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/dotfiles/.cshrc
           dest: /root/.cshrc
           owner: root
           group: wheel
@@ -69,35 +114,32 @@
 
       - name: (root) .zshrc
         copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.zshrc
-          dest: /root/.zshrc
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/dotfiles/.zshrc
+          dest: /tmp/.zshrc
           owner: root
           group: wheel
-          mode: '0640'
-
-      - name: (dragon) Copy .profile
-        copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.profile
-          dest: /home/dragon/.profile
-          owner: dragon
-          group: dragon
-          mode: '0640'     
+          mode: '0640'  
  
+      - name: (root) .zpath
+        copy:
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/dotfiles/.zpath
+          dest: /root/.zpath
+          owner: root
+          group: wheel
+          mode: '0640'  
+
       - name: (dragon) Copy .cshrc
         copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.cshrc
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/dotfiles/.cshrc
           dest: /home/dragon/.cshrc
           owner: dragon
           group: dragon
           mode: '0640'  
 
-      - name: (dragon) .zshrc
+      - name: (root) .zpath
         copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/.zshrc
-          dest: /home/dragon/.zshrc
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/dotfiles/.zpath
+          dest: /home/dragon/.zpath
           owner: dragon
           group: dragon
-          mode: '0640'              
-
-      # - name: Execute bootstrap.sh
-      #   shell: /root/bootstrap.sh >> /root/bootstrap.log
+          mode: '0640'          

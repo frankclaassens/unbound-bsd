@@ -12,13 +12,6 @@ data "vultr_region" "london" {
   }
 }
 
-# data "vultr_os" "container_bsd" {
-#   filter {
-#     name   = "name"
-#     values = ["FreeBSD 12 x64"]
-#   }
-# }
-
 data "vultr_plan" "starter" {
   filter {
     name   = "price_per_month"
@@ -34,6 +27,13 @@ data "vultr_plan" "starter" {
 data "vultr_snapshot" "unbound-base" {
   description_regex = "unbound-base-image"
 }
+
+# data "vultr_os" "container_bsd" {
+#   filter {
+#     name   = "name"
+#     values = ["FreeBSD 12 x64"]
+#   }
+# }
 
 # data "vultr_ssh_key" "root" {
 #   filter {
@@ -65,6 +65,14 @@ resource "vultr_firewall_rule" "rule1" {
   protocol          = "tcp"
   from_port         = 22
   to_port           = 22
+}
+
+resource "vultr_firewall_rule" "rule2" {
+  firewall_group_id = "${vultr_firewall_group.unbound.id}"
+  cidr_block        = "0.0.0.0/0" 
+  protocol          = "tcp"
+  from_port         = 19844
+  to_port           = 19844
 }
 ###############################################################################################
 # INSTANCES
