@@ -34,7 +34,7 @@ portmaster --clean-distfiles -y
 env BATCH=yes; portmaster -G --no-confirm -y security/libressl
 
 echo "PLEASE REBOOT TO REFRESH LIBRESSL"
-exit 0
+#exit 0
 
 ##############################################################
 # GNU TOOLING

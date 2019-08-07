@@ -94,13 +94,14 @@
           group: wheel
           mode: '0700'
 
-      - name: Copy bootstrap-quick.sh
+      - name: Copy packages
         copy:
-          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/scripts/bootstrap-quick.sh
-          dest: /tmp/bootstrap-quick.sh
+          src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/packages/All/
+          dest: /usr/ports/packages/All
           owner: root
           group: wheel
-          mode: '0700'
+          mode: '644'
+
       ######################################   
       # USER PROFILES
       ######################################
