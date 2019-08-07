@@ -56,13 +56,13 @@ PM_VERBOSE=vopt
 SAVE_SHARED=wopt
 #
 # Install a package if available (-P or --packages)
-# PM_PACKAGES=first
+PM_PACKAGES=first
 #
 # Only install packages (-PP or --packages-only)
 # PM_PACKAGES=only
 #
 # Install packages for build-only dependencies (--packages-build)
-# PM_PACKAGES_BUILD=pmp_build
+PM_PACKAGES_BUILD=pmp_build
 #
 # Delete build-only dependencies when finished (--delete-build-only)
 PM_DEL_BUILD_ONLY=pm_dbo

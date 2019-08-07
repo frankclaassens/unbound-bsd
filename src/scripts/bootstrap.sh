@@ -16,8 +16,7 @@ cp /usr/share/zoneinfo/Europe/London /etc/localtime
 /usr/sbin/portsnap fetch && /usr/sbin/portsnap extract && /usr/sbin/portsnap update && /usr/sbin/portsnap fetch update
 
 # Remove all packages
-pkg update
-pkg remove -a --force -y
+pkg delete -a --force -y
 
 # Reinstall pkgng
 make -DBATCH -C /usr/ports/ports-mgmt/pkg install clean
@@ -27,8 +26,9 @@ make -DBATCH -C /usr/ports/ports-mgmt/dialog4ports install clean
 make -DBATCH -C /usr/ports/ports-mgmt/portmaster install clean
 
 # Rebuild all ports
-portmaster --clean-distfiles -y
+pkg update -f
 env BATCH=yes; portmaster -G --no-confirm -a -f -D -y
+portmaster --clean-distfiles -y
 
 # Install libressl
 env BATCH=yes; portmaster -G --no-confirm -y security/libressl
@@ -40,7 +40,11 @@ exit 0
 # GNU TOOLING
 ##############################################################
 #or env BATCH=yes; portmaster -G --no-confirm -y devel/amd64-binutils
-env BATCH=yes; portmaster -G --no-confirm -y devel/gmake devel/autoconf devel/automake devel/binutils devel/libtool
+env BATCH=yes; portmaster -G --no-confirm -y devel/gmake
+env BATCH=yes; portmaster -G --no-confirm -y devel/autoconf
+env BATCH=yes; portmaster -G --no-confirm -y devel/automake
+env BATCH=yes; portmaster -G --no-confirm -y devel/binutils
+env BATCH=yes; portmaster -G --no-confirm -y devel/libtool
 env BATCH=yes; portmaster -G --no-confirm -y lang/gcc9
 
 export CC="gcc9"
@@ -75,7 +79,9 @@ service openntpd onestart
 ##############################################################
 # Configure oh-my-zsh
 ##############################################################
-env BATCH=yes; portmaster -G --no-confirm -y ftp/curl shells/zsh devel/git
+env BATCH=yes; portmaster -G --no-confirm -y ftp/curl
+env BATCH=yes; portmaster -G --no-confirm -y shells/zsh
+env BATCH=yes; portmaster -G --no-confirm -y devel/git
 
 # Configure oh-my-zsh => root
 chsh -s /usr/local/bin/zsh root

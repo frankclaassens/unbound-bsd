@@ -20,8 +20,8 @@ alias h         history 25
 alias j         jobs -l
 alias la        ls --color=always -aF
 alias lf        ls --color=always -FA
-alias ll        ls --color=always -lAF
-alias l         ls --color=always -la
+alias ll        ls --color=always -lAFh
+alias l         ls --color=always -lah
 alias ls        ls --color=always
 
 setenv  EDITOR          vi
