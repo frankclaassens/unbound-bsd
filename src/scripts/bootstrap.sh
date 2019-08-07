@@ -26,20 +26,17 @@ make -DBATCH -C /usr/ports/ports-mgmt/dialog4ports install clean
 make -DBATCH -C /usr/ports/ports-mgmt/portmaster install clean
 
 # Rebuild all ports
-pkg update -f
-env BATCH=yes; portmaster -G --no-confirm -a -f -D -y
+rehash
 portmaster --clean-distfiles -y
+env BATCH=yes; portmaster --no-confirm -y ports-mgmt/dialog4ports
+pkg update -f
 
 # Install libressl
 env BATCH=yes; portmaster -G --no-confirm -y security/libressl
 
-echo "PLEASE REBOOT TO REFRESH LIBRESSL"
-#exit 0
-
 ##############################################################
 # GNU TOOLING
 ##############################################################
-#or env BATCH=yes; portmaster -G --no-confirm -y devel/amd64-binutils
 env BATCH=yes; portmaster -G --no-confirm -y devel/gmake
 env BATCH=yes; portmaster -G --no-confirm -y devel/autoconf
 env BATCH=yes; portmaster -G --no-confirm -y devel/automake
@@ -51,13 +48,13 @@ export CC="gcc9"
 export CXX="g++9"
 export CPP="gcc9 -E"
 
-echo 'export CC="gcc9"' | tee -a /root/.cshrc
-echo 'export CXX="g++9"' | tee -a /root/.cshrc
-echo 'export CPP="gcc9 -E"' | tee -a /root/.cshrc
+echo 'setenv  CC   gcc9' | tee -a /root/.cshrc
+echo 'setenv  CXX  g++9' | tee -a /root/.cshrc
+echo 'setenv  CPP  "gcc9 -E"' | tee -a /root/.cshrc
 
-echo 'export CC="gcc9"' | tee -a /home/dragon/.cshrc
-echo 'export CXX="g++9"' | tee -a /home/dragon/.cshrc
-echo 'export CPP="gcc9 -E"' | tee -a /home/dragon/.cshrc
+echo 'setenv  CC   gcc9' | tee -a /home/dragon/.cshrc
+echo 'setenv  CXX  g++9' | tee -a /home/dragon/.cshrc
+echo 'setenv  CPP  "gcc9 -E"' | tee -a /home/dragon/.cshrc
 
 ##############################################################
 
@@ -66,14 +63,17 @@ env BATCH=yes; portmaster -G --no-confirm -y net/openntpd
 echo 'ntpd_enable="NO"' | tee -a /etc/rc.conf
 echo 'openntpd_enable="YES"' | tee -a /etc/rc.conf
 echo 'openntpd_flags="-s"' | tee -a /etc/rc.conf
-service openntpd onestart
+service ntpd onestop
+service openntpd start
 ###### END ######
 
 # Install OPENSSH-PORTABLE
 env BATCH=yes; portmaster -G --no-confirm -y security/openssh-portable
 echo 'sshd_enable="NO"' | tee -a /etc/rc.conf
 echo 'openssh_enable="YES"' | tee -a /etc/rc.conf
-service openntpd onestart
+cp /tmp/ssh/sshd_config /usr/local/etc/ssh/sshd_config
+#service sshd stop
+#service openssh start
 ###### END ######
 
 ##############################################################
@@ -84,6 +84,7 @@ env BATCH=yes; portmaster -G --no-confirm -y shells/zsh
 env BATCH=yes; portmaster -G --no-confirm -y devel/git
 
 # Configure oh-my-zsh => root
+rehash
 chsh -s /usr/local/bin/zsh root
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended
 rm -rf /root/.zshrc
@@ -95,3 +96,5 @@ su - dragon -c 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrusse
 rm -rf /home/dragon/.zshrc
 cp /tmp/.zshrc /home/dragon/.zshrc
 chown dragon:dragon /home/dragon/.zshrc
+
+echo "ALL DONE!! PLEASE REBOOT TO REFRESH LIBRESSL"
