@@ -52,7 +52,7 @@
       - name: Copy sshd_config
         copy:
           src: /Users/fanix/Workspace/Git/freebsd-terraform-vultr/src/configs/etc/ssh/sshd_config
-          dest: /tmp/ssh/sshd_config
+          dest: /tmp/sshd_config
           owner: root
           group: wheel
           mode: '0644'

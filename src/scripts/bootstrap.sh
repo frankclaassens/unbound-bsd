@@ -3,8 +3,8 @@
 PATH="~/bin:/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin"
 export PATH
 
-rm /root/.profile
-rm /root/.login
+rm /root/.profile /home/dragon/.profile
+rm /root/.login /home/dragon/.login
 
 # Set local time
 cp /usr/share/zoneinfo/Europe/London /etc/localtime
@@ -71,7 +71,7 @@ service openntpd start
 env BATCH=yes; portmaster -G --no-confirm -y security/openssh-portable
 echo 'sshd_enable="NO"' | tee -a /etc/rc.conf
 echo 'openssh_enable="YES"' | tee -a /etc/rc.conf
-cp /tmp/ssh/sshd_config /usr/local/etc/ssh/sshd_config
+cp /tmp/sshd_config /usr/local/etc/ssh/sshd_config
 #service sshd stop
 #service openssh start
 ###### END ######
